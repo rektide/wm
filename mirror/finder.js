@@ -22,7 +22,7 @@ function HostMeta(p){
 }
 HostMeta.prototype.clearRd= clearRd
 HostMeta.prototype.fetchRd= fetchRd 
-HostMeta.prototype.resourceRel= resourceRel
+HostMeta.prototype.fetchRdRel= fetchRdRel
 HostMeta.prototype.siteRel= localRel
 
 function clearRd(resource){
