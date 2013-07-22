@@ -2,31 +2,35 @@
 * finder inquires for the host-meta of the other side of a pipe & explores it's ResourceDescriptor tree
 */
 
-module.exports=finder
+module.exports= finder
 module.exports.HostMeta= HostMeta
 
-var xrdProperties= ["subject","expires","aliases","properties",links]
+var xrdProperties= ["subject","expires","aliases","properties","links"]
 
 function finder(p){
-	p.rdHostMeta= HostMeta(p)
+	if(!p.rdfHostMeta)
+		return p.rdHostMeta= HostMeta(p)
+	return p.rdfHostMeta
 }
 
 function HostMeta(p){
+	if(!(this instanceof HostMeta))
+		return new HostMeta(p)
 	this.__p= p
 	this.__resourceDocuments= {}
-	this.__proto__= Rd.prototype
-	var rdPromise= p
-	  .request(RdRequest(url))
-	  .then(Rd.bind(this))
+	var rdPromise= this.fetchRd()
 	deferBindings(this,rdPromise)
+	return this
 }
+HostMeta.prototype= Rd.prototype
+HostMeta.prototype.constructor= HostMeta
 HostMeta.prototype.clearRd= clearRd
 HostMeta.prototype.fetchRd= fetchRd 
 HostMeta.prototype.fetchRdRel= fetchRdRel
 HostMeta.prototype.siteRel= localRel
 
 function clearRd(resource){
-	this.__resourceDocuments[resource]= null
+	this.__resourceDocuments[resource]= {}
 }
 /**
 * Retrieve a resource-document via the host-meta
@@ -35,7 +39,7 @@ function clearRd(resource){
 */
 function fetchRd(res){
 	return this.__resourceDocuments[res]||
-	  (this.__resourceDocuments[res]=this.request(RdRequest(res)).then(makeRd)
+	  (this.__resourceDocuments[res]= this.__p.request(RdRequest(res)).then(makeRd))
 }
 /**
 * Lookup a link of type l for a resource
@@ -108,30 +112,33 @@ var makeRd= make(Rd)
 * Install a deferred method for every prototype method and only perform
 * execution once a passed in promise resolves, and also un-install then
 */
-function deferBindings(obj,promise,slots){
-	// defer bindings
-	var slots= slots||obj.__proto__.keys()
-	for(var slot in slots){
-		if(obj.hasOwnProperty(slot) || typeof obj[slot] != Function)
-			continue
-		var replacement= this[slot]= function(slot){
-			return this.then(function(slot,args){
-				return this[slot].apply(this,args)
-			}.bind(this,slot,Array.prototype.splice(arguments,1))
-		}.bind(promise,slot)
-		replacement.__deferBindings= 1
-	}
-	promise.then(function(){
+function deferBindings(obj,promise,slots,antiSlots){
+	// reinstall by deleting defer-shims
+	var slots= slots||obj.__proto__.keys(),
+	  ready= promise.then(function(){
 		for(var slot in this){
 			if(this[slot].__deferBindings)
 				delete this[slot]
 		}
-	}.bind(this))
+	  }.bind(obj))
+	// defer-shim each method slot
+	for(var slot in slots){
+		if(obj.hasOwnProperty(slot) || typeof obj[slot] != "function" || antiSlots.indexOf(slot) != -1)
+			continue
+		var replacement= this[slot]= function(ready,slot){
+			var args= Array.prototype.splice(Arguments,1)
+			  runReal= function(slot,args){
+				return this[slot].apply(this,args) // deferred execution. ready already has real slot in palce.
+			  }.bind(this,slot,args)
+			return ready.then(runReal) // once ready
+		}.bind(obj,ready,slot)
+		replacement.__deferBindings= 1 // mark for deletion during ready
+	}
 }
 
 function RdRequest(url){
 	return {
-	  url:url,
+	  url:url||"p:///.well-known/host-meta",
 	  headers:{
 	    accept: "application/json"}}
 }
@@ -142,7 +149,7 @@ function RdRequest(url){
 */
 function Rd(res){
 	if(res.status> 400){
-		throw{name:"InvalidResponseError",
+		throw {name:"InvalidResponseError",
 		  message:"Status code shows an exception occured",
 		  response:res}
 	}
