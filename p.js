@@ -1,4 +1,12 @@
-var uuid= require("uuid")
+var uuid= require("uuid"),
+  primitives= require("primitives"),
+  PromiseRequest= primitives.PromiseRequest,
+  PromiseResponse= primitives.PromiseResponse
+
+module.exports= p
+module.exports.p= p
+module.exports.PromiseRequest= PromiseRequest
+module.exports.PromiseResponse= PromiseResponse
 
 /**
 * p extends a port with request/response semantics
@@ -60,25 +68,6 @@ p.prototype.request= function(opts){
 	  t= opts.transfers
 	port.postMessage(d!===undefined?[m,u,h,d]:[m,u,h],t)
 	return defer
-}
-
-/**
-* Semi- XMLHttpRequest Respones compliant implementation for request
-*/
-function PromiseResponse(e){
-	this.status= e[1]
-	this.headers= e[2]
-	this.response= e[3]
-	this.responseType= "document"
-}
-PromiseResponse.prototype.getResponseHeader(h){
-	return this.headers[h.toLowerCase()]
-}
-PromiseResponse.prototype.getAllResponseHeaders(){
-	return this.headers
-}
-PromiseResponse.prototype.overrideMimeType(mimeType){
-	throw "not supported"
 }
 
 function Q(){
