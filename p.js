@@ -21,16 +21,16 @@ function p(opts,port){
 	port.addEventListener("message",function(e){
 		if(!e.data || !(e.data instanceof Array) || e.data[0] != "RE")
 			return
-		var h= e.data[1]
-		if(!h)
-			return
-		var pipeId= h.p,
+		var res= new PromiseRespones(e.data),
+		  h= res.headers,
+		  pipeId= h.p,
 		  defer= this.__outstanding.get(pipeId)
-		if(!req)
+		if(!pipeId) // !
 			return
-		this.__outstanding.delete(pipeId)
-
-		defer.resolve(new PromiseResponse(e))
+		if(defer){
+			delete this.__outstanding[pipeId]
+			defer.resolve(res)
+		}
 	}.bind(this))
 	return this
 }
