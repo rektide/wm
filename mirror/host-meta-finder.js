@@ -1,33 +1,39 @@
+var getOrRun= require("std/get-or-run")
+
 /**
-* finder inquires for the host-meta of the other side of a pipe & explores it's ResourceDescriptor tree
+* HostMetaFinder inquires for the host-meta of the other side of a pipe & explores it's ResourceDescriptor tree
 */
 
-module.exports= finder
-module.exports.HostMeta= HostMeta
+module.exports= makeHostMetaFinder
+module.exports.makeHostMetaFinder= makeHostMetaFinder
+module.exports.HostMetaFinder= HostMetaFinder
+module.exports.hostmetaFinder= HostMetaFinder
+
+module.exports.WellKnownHostMetaJson= "p:///.well-known/host-meta"
 
 var xrdProperties= ["subject","expires","aliases","properties","links"]
 
-function finder(p){
-	if(!p.rdfHostMeta)
-		return p.rdHostMeta= HostMeta(p)
-	return p.rdfHostMeta
+function makeHostMetaFinder(p){
+	if(!p.hostMetaFinder)
+		return p.hostMetaFinder= HostMeta(p)
+	return p.hostMetaFinder
 }
 
-function HostMeta(p){
-	if(!(this instanceof HostMeta))
-		return new HostMeta(p)
+function HostMetaFinder(p){
+	if(!(this instanceof HostMetaFinder))
+		return new HostMetaFinder(p)
 	this.__p= p
 	this.__resourceDocuments= {}
 	var rdPromise= this.fetchRd()
 	deferBindings(this,rdPromise)
 	return this
 }
-HostMeta.prototype= Rd.prototype
-HostMeta.prototype.constructor= HostMeta
-HostMeta.prototype.clearRd= clearRd
-HostMeta.prototype.fetchRd= fetchRd 
-HostMeta.prototype.fetchRdRel= fetchRdRel
-HostMeta.prototype.siteRel= localRel
+HostMetaFinder.prototype= Rd.prototype
+HostMetaFinder.prototype.constructor= HostMetaFinder
+HostMetaFinder.prototype.clearRd= clearRd
+HostMetaFinder.prototype.fetchRd= fetchRd 
+HostMetaFinder.prototype.fetchRdRel= fetchRdRel
+HostMetaFinder.prototype.siteRel= localRel
 
 function clearRd(resource){
 	this.__resourceDocuments[resource]= {}
@@ -53,7 +59,7 @@ function fetchRdRel(res,rel,last){
 		var l= links[i]
 		if(l.template){
 			if(l.rel == "lrdd"){
-				return hm.fetchRd(res).then(function(res,rel,i,rd){
+				return this.fetchRd(res).then(function(res,rel,i,rd){
 					var local= rd.localRel(rel)
 					if(local)
 						return returnLink(local)
@@ -138,7 +144,7 @@ function deferBindings(obj,promise,slots,antiSlots){
 
 function RdRequest(url){
 	return {
-	  url:url||"p:///.well-known/host-meta",
+	  url:url||getOrRun(module.exports.WellKnownHostMetaJson),
 	  headers:{
 	    accept: "application/json"}}
 }
