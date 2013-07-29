@@ -17,6 +17,7 @@ function p(opts,port){
 
 	// register outstanding
 	this.__outstanding= opts.outstanding||new WeakMap()
+	this.__port= port
 
 	port.addEventListener("message",function(e){
 		if(!e.data || !(e.data instanceof Array) || e.data[0] != "RE")
@@ -34,7 +35,6 @@ function p(opts,port){
 	}.bind(this))
 	return this
 }
-module.exports= p
 
 /**
 * request fires an outgoing request

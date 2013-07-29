@@ -1,9 +1,29 @@
+module.exports.Req= PromiseRequest
+module.exports.Res= PromiseResponse
 module.exports.PromiseRequest= PromiseRequest
 module.exports.PromiseResponse= PrmoiseResponse
 
-var bigint= Math,pow(2,52)
+module.exports.minPipe= 0
+module.exports.stridePipe= Math.pow(2,52)-1
 
-function PromiseRequest(e){
+/**
+  Pipe ID range selector
+*/
+function rand(min,stride){
+	min= min|| module.exports.minPipe
+	stride= stride|| module.exports.stridePipe
+	return Math.floor(Math.random()*stride)+min
+}
+
+// default values to use for Request/Response
+module.exports.defaultRequest= [undefined,undefined,empty]
+module.exports.defaultResponse= [undefined,100,empty]
+
+function empty(){
+	return {}
+}
+
+function PrimitiveRequest(e){
 	if(!e.length && e !== undefined) // probably want obj constructors too
 		throw "Invalid PromiseRequest"
 	this.val= e|| []
@@ -11,68 +31,71 @@ function PromiseRequest(e){
 	this.headers.p= this.headers.p||(Math.floor(Math.random()*bigint))
 	return this
 }
-makeArrayAccessors(PromiseRequest.prototype, ["method","url","headers","request"])
+makeArrayAccessors(PrimitiveRequest.prototype, ["method","url","headers","request"], module.exports.defaultRequest)
 
 var p= {get:function(){
 	return this.headers.p
 },set:function(val){
 	this.headers.p= val
 })
-Object.defineProperty(PromiseRequest.prototype,"p",p)
+Object.defineProperty(PrimitiveRequest.prototype,"p",p)
 
 
 /**
 * Semi- XMLHttpRequest Respones compliant implementation for request
 */
-function PromiseResponse(e){
-	if(!e.length && e !== undefined)
-		throw "Invalid PromiseResponse"
-	this.val= e|| []
-	this.val[0]= "RE"
-	this.responseType= "document"
+function PrimitiveResponse(req){
+	this.val= ["RE",undefined,{p:req.headers.p}]
+	this.responseType= "json"
 	return this
 }
-makeArrayAccessors(PromiseResponse.prototype, [undefined, "status","headers","response"])
+makeArrayAccessors(PrimitiveResponse.prototype, [undefined, "status","headers","response"], module.exports.defaultResponse)
 
 /**
   Retrieve a single header from the PromiseReponse
 */
-PromiseResponse.prototype.getResponseHeader= funnction(h){
+PrimitiveResponse.prototype.getResponseHeader= funnction(h){
 	return this.headers[h.toLowerCase()]
 }
 /**
 */
-Object.defineProperty(PromiseResponse.prototype,"responseHeader",{
+Object.defineProperty(PrimitiveResponse.prototype,"responseHeader",{
 	get:getAllResponseHeaders
   }
 )
-PromiseResponse.prototype.getallResponseHeaders= getAllResponseHeaders
+PrimitiveResponse.prototype.getallResponseHeaders= getAllResponseHeaders
 function getAllResponseHeaders(){
 	return this.headers
 }
-PromiseResponse.prototype.overrideMimeType= overrideMimeType
+PrimitiveResponse.prototype.overrideMimeType= overrideMimeType
 function overrideMimeType(mimeType){
 	throw "not supported"
 }
 
-Object.defineProperty(PromiseResponse.prototype,"p",p)
+Object.defineProperty(PrimitiveResponse.prototype,"p",p)
 
 /**
   @param Obj
 */
-function makeArrayAcessors(obj,named){
+function makeArrayAcessors(obj,named,defaults){
 	var defineProperties= accessor
 	if(obj)
-		defineProperties= defineProperties.bind(obj)
+		defineProperties= defineProperties.bind(obj,defaults?defaults:{})
 	named.forEach(named, defineProperties)
 }
 
-function accessor(val,index){
+
+function accessor(defaults,name,index){
 	if(val === undefined)
 		return
-	Object.defineProperty(this,val,{
+	Object.defineProperty(this,name,{
 		get: function(){
-			return this.val[index]
+			var val= this.val[index],
+			  def
+			if(val === undefined && !!(def= defaults[index]))
+				val= this.val[index]= getOrSet(def)
+			}
+			return val
 		},
 		set: function(newVal){
 			this.val[index]= newVal
