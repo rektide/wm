@@ -2,6 +2,7 @@ module.exports.Req= PromiseRequest
 module.exports.Res= PromiseResponse
 module.exports.PromiseRequest= PromiseRequest
 module.exports.PromiseResponse= PrmoiseResponse
+module.exports.accessor= accessor
 
 module.exports.minPipe= 0
 module.exports.stridePipe= Math.pow(2,52)-1
