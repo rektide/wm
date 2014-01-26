@@ -25,11 +25,11 @@ function Server(p){
 	this.__p= p
 	this.__chain= new cc(module.exports.SendCommand)
 	
-	p.__port.addEventListener("message",module.exports.MessageHandler.bind(this))
+	p.__port.addEventListener("message",module.exports.RequestHandler.bind(this))
 	return this
 }
 
-function MessageHandler(e){
+function RequesetHandler(e){
 	if(!e.data || !(e.data instanceof Array) || e.data[0] == "RE")
 		return
 	var req_= new req(e.data),

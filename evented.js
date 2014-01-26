@@ -3,7 +3,7 @@ var events= require("events"),
   primitive= require("./primitives")
 
 module.exports.Req= EventedRequest
-module.exoprts.Res= EventedResponse
+module.exports.Res= EventedResponse
 
 function EventedRequest(e){
 	primitive.Req.apply(this,e)

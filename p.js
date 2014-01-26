@@ -1,9 +1,9 @@
 var uuid= require("uuid"),
-  primitives= require("primitives"),
+  primitives= require("./primitives"),
   PromiseRequest= primitives.PromiseRequest,
   PromiseResponse= primitives.PromiseResponse
 
-module.exports= p
+module.exports= exports= p
 module.exports.p= p
 module.exports.PromiseRequest= PromiseRequest
 module.exports.PromiseResponse= PromiseResponse
@@ -14,6 +14,10 @@ module.exports.PromiseResponse= PromiseResponse
 function p(opts,port){
 	if(!(this instanceof p))
 		return new p.apply({},arguments)
+	if(opts && port === undefined){
+		port= opts
+		opts= {}
+	}
 
 	// register outstanding
 	this.__outstanding= opts.outstanding||new WeakMap()
@@ -22,7 +26,7 @@ function p(opts,port){
 	port.addEventListener("message",function(e){
 		if(!e.data || !(e.data instanceof Array) || e.data[0] != "RE")
 			return
-		var res= new PromiseRespones(e.data),
+		var res= new exports.PromiseRespones(e.data),
 		  h= res.headers,
 		  pipeId= h.p,
 		  defer= this.__outstanding.get(pipeId)
@@ -66,7 +70,7 @@ p.prototype.request= function(opts){
 	var m= opts.method||"GET",
 	  d= opts.data,
 	  t= opts.transfers
-	port.postMessage(d!===undefined?[m,u,h,d]:[m,u,h],t)
+	port.postMessage(d!==undefined?[u,m,h,d]:[u,m,h],t)
 	return defer
 }
 

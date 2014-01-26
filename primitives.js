@@ -38,7 +38,7 @@ var p= {get:function(){
 	return this.headers.p
 },set:function(val){
 	this.headers.p= val
-})
+}}
 Object.defineProperty(PrimitiveRequest.prototype,"p",p)
 
 
@@ -55,7 +55,7 @@ makeArrayAccessors(PrimitiveResponse.prototype, [undefined, "status","headers","
 /**
   Retrieve a single header from the PromiseReponse
 */
-PrimitiveResponse.prototype.getResponseHeader= funnction(h){
+PrimitiveResponse.prototype.getResponseHeader= function(h){
 	return this.headers[h.toLowerCase()]
 }
 /**
@@ -95,7 +95,6 @@ function accessor(defaults,name,index){
 			  def
 			if(val === undefined && !!(def= defaults[index]))
 				val= this.val[index]= getOrSet(def)
-			}
 			return val
 		},
 		set: function(newVal){
