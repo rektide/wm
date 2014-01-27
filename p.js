@@ -1,7 +1,8 @@
 var uuid= require("uuid"),
   primitives= require("./primitives"),
   PromiseRequest= primitives.PromiseRequest,
-  PromiseResponse= primitives.PromiseResponse
+  PromiseResponse= primitives.PromiseResponse,
+  wamp= primitives.WAMP
 
 module.exports= exports= p
 module.exports.p= p
@@ -69,8 +70,21 @@ p.prototype.request= function(opts){
 	// send
 	var m= opts.method||"GET",
 	  d= opts.data,
-	  t= opts.transfers
-	port.postMessage(d!==undefined?[u,m,h,d]:[u,m,h],t)
+	  t= opts.transfers,
+	  a= wamp.CALL
+	if(a == "NOTIFY"){
+		a= wamp.EVENT
+		m= null
+	}else if(a == "M-SEARCH"){
+		a= wamp.SUBSCRIBE
+		m= null
+	}
+
+	if(m){
+		port.postMessage(d!==undefined?[wamp.CALL,u,m,h,d]:[wamp.CALL,u,m,h],t)
+	}else{
+		port.postMessage(d!==undefined?[wamp.CALL,u,h,d]:[wamp.CALL,u,h],t)
+	}
 	return defer
 }
 

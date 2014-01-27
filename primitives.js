@@ -7,6 +7,12 @@ module.exports.accessor= accessor
 module.exports.minPipe= 0
 module.exports.stridePipe= Math.pow(2,52)-1
 
+modules.export.WAMP= {}
+["WELCOME", "PREFIX", "CALL", "CALLRESULT", "CALLERROR", "SUBSCRIBE", "UNSUBSCRIBE", "PUBLISH", "EVENT"].forEach(function(val,key){
+	modules.export.WAMP[val]= key
+	modules.export.WAMP[key]= val
+})
+
 /**
   Pipe ID range selector
 */
