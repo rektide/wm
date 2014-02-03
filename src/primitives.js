@@ -62,7 +62,7 @@ function applyResponseProperties(o,opts){
 	}
 
 	var headerName, response= {
-	  get: Function("var val= this"+acc+"; if(val) val= val[2]; if(val) val= val[2]; if(val) return val; return (!this.responseType || this.responseType == 'text')? "": null;")
+	  get: Function("var val= this"+acc+"; if(val) val= val[2]; if(val) val= val[2]; if(val) return val; return (!this.responseType || this.responseType == 'text')? '': null;"),
 	  enumerable: true
 	}
 	if(prefix){

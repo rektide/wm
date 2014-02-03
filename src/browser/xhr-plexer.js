@@ -1,6 +1,4 @@
-var primitives= require("../primitives"),
-  xhr= primitives.web.XMLHttpRequest,
-  pxhr= require("xhr")
+var primitives= require("../primitives")
 
 module.exports= xhr
 module.exports.xhr= xhr

@@ -19,7 +19,7 @@ var clientRequestProps= (function(names){
 })(["msgType","pipe","url","method","headers","request"])
 
 function ClientRequest(e,opts){
-	var haveOpts== !!opts
+	var haveOpts= !!opts
 	if(e instanceof Object){
 		opts= e
 		e= null

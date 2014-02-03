@@ -19,11 +19,11 @@ function makeHandler(opts,port){
 		throw "Expected a port"
 	}
 	var handler = function serverHandler(e){
-		var res= Request(e.data),
-		if(!res ||  Array) || !wamp.isClientMsg(data[0])){
+		var res= Request(e.data)
+		if(!res || !(res instanceof Array) || !wamp.isClientMsg(data[0])){
 			(handler.unknownHandler||module.exports.unknownHandler||nop)(err.NoDataError,e)
 		}
-		  pipeId= res.pipeId()
+		pipeId= res.pipeId()
 		if(res.){
 			(handler.unknownHandler||module.exports.unknownHandler||nop)(e)
 		}

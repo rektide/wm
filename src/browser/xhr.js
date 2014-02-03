@@ -64,7 +64,8 @@ applyXhr(XMLHttpRequest.prototype)
 // monkey patch EventTarget.dispatchEvent to handle EventListeners
 XMLHttpRequest.prototype.dispatchEvent= (function dispatchEvent(e){
 	EventTarget.dispatchEvent.call(e)
-	if((var on= this["on"+e.type]))
+	var on= this["on"+e.type]
+	if(on)
 		on.call(this,e)
 })
 
@@ -117,11 +118,11 @@ XMLHttpRequest.prototype.setRequestHeader= (function setRequestHeader(header,val
 			throw err.InvalidStateException
 		if(XMLHttpRequest.verbotenHeaders[header])
 			return
-		if(header.startsWith("proxy-") || header.startsWith("sec-")
+		if(header.startsWith("proxy-") || header.startsWith("sec-"))
 			return
 	}
 	this.headers[header]= value
-}
+})
 
 Object.define(XMLHttpRequest.prototype,"timeout",{
 	set:function(value){
@@ -296,7 +297,7 @@ XMLHttpRequest.prototype.complete= (function complete(msg){
 		this.responseType= "arraybuffer"
 	else if(this.response instanceof Blob)
 		this.responseType= "blob"
-	else if(mime.startsWith("application/html") || mime.startsWith("text/html") || mime.endsWith("+xml"){
+	else if(mime.startsWith("application/html") || mime.startsWith("text/html") || mime.endsWith("+xml")){
 		this.responseType= "document"
 		if(this.response instanceof String){
 			var xml= (new DOMParser()).parseFromString(this.response, "text/xml")
@@ -324,7 +325,6 @@ XMLHttpRequest.prototype.complete= (function complete(msg){
 XMLHttpRequest.prototype.dispatchProgress= (function dispatchProgress(type,unsent){
 	if(!type)
 		type= "progress"
-	}
 	if(this.response && this.response.length)
 		this.dispatchEvent({
 		  type:type,
@@ -344,7 +344,6 @@ XMLHttpRequest.prototype.dispatchUpload= (function dispatchUpload(type,unsent){
 		return
 	if(!type)
 		type= "progress"
-	}
 	if(this.request && this.request.length)
 		this.uploadTarget.dispatchEvent({
 		  type:type,
