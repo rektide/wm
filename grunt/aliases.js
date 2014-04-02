@@ -1,14 +1,21 @@
-function prefixBrowserify(k){return "browserify:"+k}
+function prefixer(prefix){return function(o){return o.map(function(k){return prefix+k})}}
+var prefixBrowserify= prefixer("browserify:"),
+  prefixKarma= prefixer("karma:")
+
 var browsers= require("./browserify"),
-  dists= browsers.wm.children.map(prefixBrowserify),
-  karmas= require("./browserify").karma.children.map(prefixBrowserify)
-karmas.push("karma:karma")
+  browserifyDists= prefixBrowserify(browsers.wm.children)
+  browserifyTests= prefixBrowserify(browsers.karmas.children)
+
+var karmaTest= prefixKarma(browsers.karmas.children)
 
 module.exports= {
 	dist: ["browserify:src"],
-	"browserify:src": dists,
+	"browserify:src": browserifyDists,
+	"browserify:karma": browserifyTests,
 	test: ["test-karma"],
-	"test-karma": karmas,
+	"test-karma": browserifyTests.concat("karma:karma"),
 	continuous: ["karma:background:start", "watch"],
 	default: ["dist", "test"]
 }
+
+console.log("HAVE",module.exports)

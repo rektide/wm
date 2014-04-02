@@ -7,8 +7,8 @@ module.exports = {
 		}
 	},
 	karma: {
-		files: ["karma/**/*.js"],
-		tasks: ["test"],
+		files: ["p.js","src/**/*.js","karma/**/*.js"],
+		tasks: ["browserify:karma","karma:background:run"],
 		options: {
 			spawn: false
 		}

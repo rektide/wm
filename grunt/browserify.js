@@ -25,10 +25,10 @@ for(var i in conf){
 	conf.wm.children.push(i)
 }
 
-var karmas= conf.karma= _.extend({
+var karmas= conf.karmas= _.extend({
 	src: [],
-	children: [],
-	dest: "dist/karma.js"
+	children: ["karmas"],
+	dest: "dist/karmas.js"
 }, workerify);
 ["wm-1"].forEach(function(testName){
 	var karma= _.extend({
