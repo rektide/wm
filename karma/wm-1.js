@@ -1,4 +1,6 @@
-var assert= require("assert"),
+if(window && window.webkitURL) window.URL= window.webkitURL
+var Blob= require("blob"),
+  assert= require("assert"),
   w= new Worker("./worker/echo"),
   p= require("../p")(w)
 

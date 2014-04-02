@@ -13,6 +13,7 @@
 		"event-target": "~0.1.0"
 	},
 	"devDependencies": {
+		"blob": "0.0.2",
 		"browserify": "~3.20.0",
 		"chai": "^1.9.1",
 		"grunt": "~0.4.2",

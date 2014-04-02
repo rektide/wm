@@ -1,6 +1,7 @@
 module.exports= {
 	options: {
-		configFile: "karma/karma.conf.js"
+		configFile: "karma/karma.conf.js",
+		captureConsole: true
 	},
 	karma: {
 		singleRun: true

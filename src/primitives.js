@@ -1,6 +1,6 @@
 var uuid= require("uuid")
 
-var methods= modules.exports.methods= {}
+var methods= module.exports.methods= {}
 ["GET","POST","PUT","DELETE","CONNECT","HEAD","OPTIONS","TRACE", // http http://www.ietf.org/rfc/rfc2616
 "NOTIFY","M-SEARCH", // SSDP tools.ietf.org/html/draft-cai-ssdp-v1
 "PROPFIND","PROPPATCH","MKCOL","COPY","MOVE","LOCK","UNLOCK", // webdav http://www.ietf.org/rfc/rfc2518
@@ -11,12 +11,12 @@ var methods= modules.exports.methods= {}
 "SEARCH"] // search http://tools.ietf.org/html/rfc5323
 	.forEach(biset,module.exports.methods)
 
-var xhrState= modules.exports.xhrState= {}
+var xhrState= module.exports.xhrState= {}
 ["UNSENT","OPENED","HEADERS_RECEIVED","LOADING","DONE"].forEach(biset,xhrState)
 
 //// WAMP
 
-var wamp= modules.export.wamp= {}
+var wamp= module.export.wamp= {}
 ["WELCOME", "PREFIX", "CALL", "CALLRESULT", "CALLERROR", "SUBSCRIBE", "UNSUBSCRIBE", "PUBLISH", "EVENT"].forEach(biset,module.exports.wamp)
 wamp.SERVER= [wamp.WELCOME, wamp.CALLRESULT, wamp.CALLERROR, wamp.EVENT]
 wamp.CLIENT= [wamp.PREFIX, wamp.CALL, wamp.SUBSCRIBE, wamp.UNSUBSCRIBE, wamp.PUBLISH]
