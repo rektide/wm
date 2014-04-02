@@ -9,6 +9,7 @@ var workerify= {
 var conf= {
 	wm: {
 		src: ["src/**/*.js","p.js"],
+		children: [],
 		dest: "dist/wm.js"
 	},
 	browser: {
@@ -19,10 +20,14 @@ var conf= {
 		src: ["src/node/*.js","p.js"],
 		dest: "dist/wm-node.js"
 	},
-};
+}
+for(var i in conf){
+	conf.wm.children.push(i)
+}
 
 var karmas= conf.karma= _.extend({
 	src: [],
+	children: [],
 	dest: "dist/karma.js"
 }, workerify);
 ["wm-1"].forEach(function(testName){
@@ -34,6 +39,7 @@ var karmas= conf.karma= _.extend({
 	  }
 	}, workerify)
 	karmas.src.push(karma.src)
+	karmas.children.push(testName)
 	conf[testName]= karma
 })
 
