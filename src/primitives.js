@@ -1,7 +1,15 @@
 var uuid= require("uuid")
 
 var methods= modules.exports.methods= {}
-["GET","POST","PUT","DELETE","PATCH"].forEach(biset,module.exports.methods)
+["GET","POST","PUT","DELETE","CONNECT","HEAD","OPTIONS","TRACE", // http http://www.ietf.org/rfc/rfc2616
+"NOTIFY","M-SEARCH", // SSDP tools.ietf.org/html/draft-cai-ssdp-v1
+"PROPFIND","PROPPATCH","MKCOL","COPY","MOVE","LOCK","UNLOCK", // webdav http://www.ietf.org/rfc/rfc2518
+"VERSION-CONTROL","REPORT","CHECKOUT","CHECKIN","UNCHECKOUT","MKWORKSPACE","UPDATE","LABEL","MERGE","BASELINE-CONTROL","MKACTIVITY", // webdav versioning http://www.ietf.org/rfc/rfc3253
+"ORDERPATCH",  // webdav ordered-collection http://www.ietf.org/rfc/rfc3648
+"ACL", // webdav acl http://www.ietf.org/rfc/rfc3744
+"PATCH", // patch http://tools.ietf.org/html/rfc5789
+"SEARCH"] // search http://tools.ietf.org/html/rfc5323
+	.forEach(biset,module.exports.methods)
 
 var xhrState= modules.exports.xhrState= {}
 ["UNSENT","OPENED","HEADERS_RECEIVED","LOADING","DONE"].forEach(biset,xhrState)
