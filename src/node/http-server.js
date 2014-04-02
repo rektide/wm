@@ -10,21 +10,15 @@ module.exports= server
 module.exports.makeServerHandler= makeServerHandler
 module.exports.unknownHandler= null
 
-function makeHandler(opts,port){
-	if(opts && port === undefined){
-		port= opts
-		opts= {}
-	}
-	if(!port){
-		throw "Expected a port"
-	}
+function makeHandler(opts){
+	opts= opts||{}
 	var handler = function serverHandler(e){
 		var res= Request(e.data)
 		if(!res || !(res instanceof Array) || !wamp.isClientMsg(data[0])){
 			(handler.unknownHandler||module.exports.unknownHandler||nop)(err.NoDataError,e)
 		}
 		pipeId= res.pipeId()
-		if(res.){
+		if(!res.outstandings[pipeId]){
 			(handler.unknownHandler||module.exports.unknownHandler||nop)(e)
 		}
 	}
@@ -36,7 +30,7 @@ function makeHandler(opts,port){
 }
 
 function server(opts,port){
-	var handler= makeHandler(opts,port)
+	var handler= makeHandler(opts)
 	port.addEventListener("message",handler)
 	return handler
 }

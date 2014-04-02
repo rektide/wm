@@ -1,5 +1,8 @@
 module.exports= {
-	"dist": ["browserify:wm"],
-	"test-compile": ["browserify:p-1", "browserify:host-meta-1", "browserify:mirror-1"],
-	default: ["dist", "test-compile"]
+	dist: ["browserify:src"],
+	"browserify:src": ["browserify:wm", "browserify:browser", "browserify:node"],
+	test: ["test-karma"],
+	"test-karma": ["browserify:karma", "karma:karma"],
+	continuous: ["karma:background:start", "watch"],
+	default: ["dist", "test"]
 }

@@ -1,0 +1,16 @@
+module.exports = {
+	browserify: {
+		files: ["p.js","src/**/*.js"],
+		tasks: ["browserify:src"],
+		options: {
+			spawn: false
+		}
+	},
+	karma: {
+		files: ["karma/**/*.js"],
+		tasks: ["test"],
+		options: {
+			spawn: false
+		}
+	}
+};

@@ -1,6 +1,6 @@
-var streams= require("streams"),
+var streams= require("stream"),
   util= require("util"),
-  primitives= require("./primitives"),
+  primitives= require("../primitives"),
   wamp= primitives.wamp,
   methods= primitives.methods,
   accessor= primitives.util.accessor,
