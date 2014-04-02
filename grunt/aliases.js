@@ -15,6 +15,7 @@ module.exports= {
 	test: ["test-karma"],
 	"test-karma": browserifyTests.concat("karma:karma"),
 	continuous: ["karma:background:start", "watch"],
+	"continuous-test": ["karma:background:start", "watch:karma"],
 	default: ["dist", "test"]
 }
 
