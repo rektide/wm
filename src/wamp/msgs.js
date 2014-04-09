@@ -1,5 +1,5 @@
 function msg(name, messageType, fields, fieldTypes, flags){
-	var lines= ["this.messageType= "+msgType],
+	var lines= ["this.messageType= ",messageType,"\n"],
 	  i= 0
 	for(i= 0; i< fields.length; ++i){
 		lines.push("this.",fields[i],"= a",i,"\n")
@@ -14,7 +14,7 @@ function msg(name, messageType, fields, fieldTypes, flags){
 		}
 	}
 	var fn = new Function("a0","a1","a2","a3","a4","a5","a6","a7", lines.join(""))
-	fn.messageType= messagetype
+	fn.messageType= messageType
 	fn.fields= fields
 	fn.fieldTypes= fieldTypes
 	for(var j in FLAGS){
@@ -22,10 +22,10 @@ function msg(name, messageType, fields, fieldTypes, flags){
 			fn[j]= true
 		}
 	}
-	module.export[name]= fn
+	module.exports[name]= fn
 }
 
-var FLAG= {
+var FLAGS= {
 	advanced: 1,
 	vargs: 2
 }

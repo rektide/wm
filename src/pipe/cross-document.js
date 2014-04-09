@@ -39,7 +39,8 @@ function prefs(opts){
 	}
 
 	this.port= opts.port
-	this.origin= opts.origin||"*"
+	this.details= opts.details|| {}
+	this.origin= opts.origin !== undefined? opts.origin: "*"
 	this.messageListener= messageListener
 }
 CrossDocumentPipe.prototype.prefs= prefs
@@ -66,7 +67,7 @@ function emit(msgType, msg){
 		msg= msgType
 		msgType= null
 	}
-	var egressMsg= self.writeMessage(msgType, msg)
+	var egressMsg= this.writeMessage(msgType, msg)
 	this.port.postMessage(egressMsg, this.origin)
 }
 CrossDocumentPipe.prototype.emit= emit

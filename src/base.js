@@ -1,6 +1,5 @@
 var events= require("events"),
-  util= require("util"),
-  Chain= require("ex-cathedra/chain")
+  util= require("util")
 
 var _emit= events.EventEmitter.prototype.emit
 
@@ -43,7 +42,7 @@ function emit(e, msg){
 Base.prototype.emit= emit
 
 function go(o, opts, proto){
-	if(proto && Object.getPrototypeOf(o) != proto){
+	if(proto && Object.getPrototypeOf(o).constructor != proto){
 		return
 	}
 	o.prefs(opts)

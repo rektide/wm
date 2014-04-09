@@ -10,10 +10,10 @@ for(var i in msgs){
 		lines.push("this."+msg.fields[j]+"= arr["+j+"]")
 	}
 	if(msg.vargs){
-		lines.push("this.arguments= arr["+j+++"]"
-		lines.push("this.argumentsKw= arr["+j+"]"
+		lines.push("this.arguments= arr["+j+++"]")
+		lines.push("this.argumentsKw= arr["+j+"]")
 	}
-	var fn= Function(arr, lines.join("\n")
+	var fn= Function("arr", lines.join("\n"))
 	util.inherits(fn, msg)
 	byId[msg.messageType]= fn
 }

@@ -30,7 +30,8 @@ var karmas= conf.karmas= _.extend({
 	children: ["karmas"],
 	dest: "dist/karmas.js"
 }, workerify);
-["wm-1"].forEach(function(testName){
+
+["msgs-1"].forEach(function(testName){
 	var karma= _.extend({
 	  src: ["karma/"+testName+".js"],
 	  dest: "dist/karma/"+testName+".js",

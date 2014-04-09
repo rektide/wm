@@ -1,13 +1,13 @@
 var msgs= require("./msgs")
 
-var all= [msgs.Goodbye.msgType, msgs.Hearbeat.msgType],
-  client= all.concat([msgs.Hello.msgType, msgs.Authenticate.msgType]),
-  server= all.concat([msgs.Welcome.msgtype, msgs.Abort.msgType, msgs.Challenge.msgType, msgs.Error.msgType])
+var all= [msgs.Goodbye.messageType, msgs.Hearbeat.messageType],
+  client= all.concat([msgs.Hello.messageType, msgs.Authenticate.messageType]),
+  server= all.concat([msgs.Welcome.messageType, msgs.Abort.messageType, msgs.Challenge.messageType, msgs.Error.messageType])
 
 function allowed(base){
 	var rv= base.slice(0)
 	for(var i= 1; i< arguments.length; ++i)
-		rv.push(arguments[i].msgType)
+		rv.push(arguments[i].messageType)
 	return rv
 }
 

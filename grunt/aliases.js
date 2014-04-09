@@ -19,4 +19,4 @@ module.exports= {
 	default: ["dist", "test"]
 }
 
-console.log("HAVE",module.exports)
+//console.log("HAVE",module.exports)
