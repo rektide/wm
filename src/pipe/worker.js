@@ -6,37 +6,30 @@ var events= require("events"),
 
 module.exports= WorkerPipe
 
-function WorkerPipe(opts,port){
-	if(!port && opts){
-		if(opts.addEventListener){
-			port= opts
-		}else if(opts.port){
-			port= opts.port
-		}
-	}
-	if(!port)
-		throw "expected port"
+function WorkerPipe(port, opts){
 	if(!(this instanceof WorkerPipe))
-		return new WorkerPipe(opts,port)
+		return new WorkerPipe(port, opts)
+	if(port && opts){
+		opts.port= port
+	}else if(port && !opts){
+		opts= {port:port}
+	}else if(!opts.port){
+		throw "expected port"
+	}
 
-	WorkerPipe.super_.call(this,opts,port)
+	WorkerPipe.super_.call(this, opts, port)
+	Base.go(this, opts, WorkerPipe)
 }
 util.inherits(WorkerPipe, CrossDocumentPipe)
 
-
-function emit(msgType,msg){
-	var arrMsg= arrayWriter(msg? msg: msgType),
-	  stringMsg= JSON.stringify(arrMsg)
-	this.port.postMessage(stringMsg)
+function readMessage(e){
+	var parseMsg= JSON.parse(e.data)
+	return arrayReader(parseMsg)
 }
-WorkerPipe.prototype.emit= emit
+WorkerPipe.prototype.readMessage= readMessage
 
-var e_emit= events.EventEmitter.prototype.emit
-
-function messageListener(e){
-	var data= JSON.parse(e.data)
-	if(Arrays.isArray(data)){
-		var msg= arrayReader(data)
-		e_emit.call(this.target, msg.messageType, msg)
-	}
+function writeMsg(msgType, msg){
+	var arrayMsg= arrayWriter(msg)
+	return JSON.stringify(arrayMsg)
 }
+WorkerPipe.prototype.writeMessage= writeMessage

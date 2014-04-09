@@ -1,50 +1,77 @@
 var events= require("events"),
   util= require("util"),
+  Base= require("../base"),
   arrayReader= require("../wamp/array-reader"),
   arrayWriter= require("../wamp/array-writer")
 
 module.exports= CrossDocumentPipe
 
-function CrossDocumentPipe(opts,port){
-	if(!port && opts){
-		if(opts.addEventListener){
-			port= opts
-		}else if(opts.port){
-			port= opts.port
+/**
+  CrossDocumentPipe exposes incoming messages as events, and sends outgoing messages via emit.
+*/
+function CrossDocumentPipe(port, opts){
+	if(!(this instanceof CrossDocumentPipe))
+		return new CrossDocumentPipe(port, opts)
+	if(port && opts){
+		opts.port= port
+	}else if(port && !opts){
+		opts= {port:port}
+	}else if(!opts.port){
+		throw "expected port"
+	}
+
+	CrossDocumentPipe.super_.call(this, opts)
+	Base.go(this, opts, CrossDocumentPipe)
+}
+util.inherits(CrossDocumentPipe, Base)
+
+var baseProto= CrossDocumentPipe.super_.prototype
+
+function prefs(opts){
+	baseProto.prefs.call(this, opts)
+
+	var self= this
+	function messageListener(e){
+		if(Arrays.isArray(e.data)){
+			var ingressMsg= self.readMessage(e)
+			_emit.call(self.target, ingressMsg.messageType, ingressMsg)
 		}
 	}
-	if(!port)
-		throw "expected port"
-	if(!(this instanceof CrossDocumentPipe))
-		return new CrossDocumentPipe(opts,port)
-	CrossDocumentPipe.super_.call(this)
 
-	this.origin= opts && opts.origin || "*"
-	this.target= opts && opts.target || this
-	this.messageListener= opts && opts.messageListener.bind(this) || this.messageListener.bind(this)
-	this.port= port
-
-	this.open()
+	this.port= opts.port
+	this.origin= opts.origin||"*"
+	this.messageListener= messageListener
 }
-util.inherits(CrossDocumentPipe, events.EventEmitter)
+CrossDocumentPipe.prototype.prefs= prefs
 
+function readMessage(e){
+	return arrayReader(e.data)
+}
+CrossDocumentPipe.prototype.readMessage= readMessage
+
+/**
+  Ingressing messages are sent to listeners
+*/
 function open(){
 	this.port.addEventListener("message", this.messageListener, false)
 }
 CrossDocumentPipe.prototype.open= open
 
-function emit(msgType,msg){
-	var arrMsg= arrayWriter(msg? msg: msgType)
-	this.port.postMessage(arrMsg, this.origin)
+/**
+  Egressing messages are send to port
+  Accepts node style invocation, or raw message with no event specified
+*/
+function emit(msgType, msg){
+	if(msgType && !msg){
+		msg= msgType
+		msgType= null
+	}
+	var egressMsg= self.writeMessage(msgType, msg)
+	this.port.postMessage(egressMsg, this.origin)
 }
 CrossDocumentPipe.prototype.emit= emit
 
-var e_emit= events.EventEmitter.prototype.emit
-
-function messageListener(e){
-	if(Arrays.isArray(e.data)){
-		var msg= arrayReader(e.data)
-		e_emit.call(this.target, msg.messageType, msg)
-	}
+function writeMessage(msgType, msg){
+	return arrayWriter(msg)
 }
-CrossDocumentPipe.prototype.messageListener= messageListener
+CrossDocumentPipe.prototype.writeMessage= writeMessage
