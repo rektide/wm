@@ -12,7 +12,7 @@ describe('basic message sending', function() {
 
 	it('should send a message', function() {
 		var channel= new MessageChannel(),
-		  pipe= new cross(channel.port1, {origin:null}),
+		  pipe= new cross(channel.port1),
 		  run= 1,
 		  done= when.defer()
 

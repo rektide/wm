@@ -40,8 +40,14 @@ function prefs(opts){
 
 	this.port= opts.port
 	this.details= opts.details|| {}
-	this.origin= opts.origin !== undefined? opts.origin: "*"
 	this.messageListener= messageListener
+	if(opts.origin !== undefined){
+		this.origin= opts.origin
+	}else if(this.port.constructor && this.port.constructor.name == "MessagePort"){
+		this.origin= null
+	}else{
+		this.origin= "*"
+	}
 }
 CrossDocumentPipe.prototype.prefs= prefs
 
