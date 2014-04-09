@@ -1,5 +1,3 @@
-var primitives= require("../primitives")
-
 module.exports= xhr
 module.exports.xhr= xhr
 module.exports.port= port

@@ -1,21 +1,23 @@
 var EventTarget= require("event-target"),
   Plexer= require("./xhr-plexer"),
-  primitives= require("../primitives"),
-  applyXhr= primitives.applyXhr,
-  err= primitives.err,
-  httpStatus= primitives.httpStatus
-  methods= primitives.methods,
-  progressNotifier= primitives.progressNotifier,
-  state= primitives.xhrState,
-  wamp= primitives.wamp,
-  accessor= primitives.util.accessor,
-  biset= primitives.util.biset,
-  uuid= primitives.util.uuid,
-  ArrayBuffer= primitive.web.ArrayBuffer,
-  Blob= primitive.web.Blob,
-  Document= primitive.web.Document,
-  FormData= primitive.web.FormData,
-  Origin= primitive.web.Origin
+  helper= require("../util/helper"),
+  http= require("../util/http"),
+  web= require("../util/web"),
+  mixinRequest= require("../util/request").RawRequest,
+  mixinResponse= require("../util/response").WrappedResponse,
+  err= http.err,
+  httpStatus= http.httpStatus,
+  methods= http.methods,
+  state= web.xhrState,
+  wamp= require("../util/wamp").wamp,
+  accessor= helper.accessor,
+  biset= helper.biset,
+  uuid= helper.uuid,
+  ArrayBuffer= web.ArrayBuffer,
+  Blob= web.Blob,
+  Document= web.Document,
+  FormData= web.FormData,
+  Origin= web.Origin
 
 var state= module.exports= XMLHttpRequest
 XMLHttpRequest.strict= false
@@ -46,7 +48,7 @@ function XMLHttpRequest(opts){
 		this.port= opts
 	if (this.port && !this.port.mailboxes)
 		Plexer.port(this.port)
-	this.wamp= [wamp.CALL,uuid(),methods.GET,null,{}]
+	this.wampRequest= [wamp.CALL,uuid(),methods.GET,null,{}]
 	this.readyState= state.UNSENT
 	this.status= 0
 	this.statusText= ""
@@ -54,7 +56,7 @@ function XMLHttpRequest(opts){
 }
 
 // mixin WAMP Request and Response properties
-applyXhr(XMLHttpRequest.prototype)
+mixinXhr(XMLHttpRequest.prototype)
 
 // mixin EventTarget
 ["addEventListener","removeEventListener","dispatchEvent"].forEach(function(slot){
@@ -211,7 +213,7 @@ XMLHttpRequest.prototype.send= (function send(data){
 
 	this.request= data
 	Plexer(this)
-	this.port.send(this.wamp)
+	this.port.send(this.wampRequest)
 
 	if(this.uploadTarget && data){
 		this.dispatchUpload("load")
@@ -283,7 +285,7 @@ XMLHttpRequest.prototype.complete= (function complete(msg){
 			this.url= url
 			this.pipe= uuid()
 			Plexer(this)
-			this.send(this.wamp)
+			this.send(this.wampRequest)
 		}
 		return
 	}
@@ -364,3 +366,36 @@ function timeoutFn(){
 		this.abort()
 	}
 }
+
+var progressNotifier= (function(){
+	var interval,
+	  progs= [],
+	  next= []
+
+	function intervalHandler(){
+		for(var i= progs.length-1; i>= 0; --i){
+			if(progs[i].state < 4)
+				progs[i].dispatchProgress()
+			else
+				progs.splice(i,1)
+		}
+		while(next.length){
+			progs.push(next.pop())
+		}
+		if(progs.length == 0){
+			clearInterval(interval)
+			interval= null
+		}
+	}
+
+	return (function progressNotifier(xhr){
+		if(!interval){
+			setInterval(intervalHandler,50)
+			progs.push(xhr)
+		}else{
+			next.push(xhr)
+		}
+	})
+})()
+
+
