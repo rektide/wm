@@ -31,7 +31,7 @@ var karmas= conf.karmas= _.extend({
 	dest: "dist/karmas.js"
 }, workerify);
 
-["msgs-1"].forEach(function(testName){
+["wamp/array-util", "wamp/msgs-by-id","pipe/cross-document"].forEach(function(testName){
 	var karma= _.extend({
 	  src: ["karma/"+testName+".js"],
 	  dest: "dist/karma/"+testName+".js",

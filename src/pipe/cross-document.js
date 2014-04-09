@@ -4,6 +4,8 @@ var events= require("events"),
   arrayReader= require("../wamp/array-reader"),
   arrayWriter= require("../wamp/array-writer")
 
+var _emit= events.EventEmitter.prototype.emit
+
 module.exports= CrossDocumentPipe
 
 /**
@@ -32,7 +34,7 @@ function prefs(opts){
 
 	var self= this
 	function messageListener(e){
-		if(Arrays.isArray(e.data)){
+		if(Array.isArray(e.data)){
 			var ingressMsg= self.readMessage(e)
 			_emit.call(self.target, ingressMsg.messageType, ingressMsg)
 		}
@@ -41,6 +43,7 @@ function prefs(opts){
 	this.port= opts.port
 	this.details= opts.details|| {}
 	this.messageListener= messageListener
+	this.target= opts.target|| this
 	if(opts.origin !== undefined){
 		this.origin= opts.origin
 	}else if(this.port.constructor && this.port.constructor.name == "MessagePort"){
@@ -61,6 +64,7 @@ CrossDocumentPipe.prototype.readMessage= readMessage
 */
 function open(){
 	this.port.addEventListener("message", this.messageListener, false)
+	this.port.start()
 }
 CrossDocumentPipe.prototype.open= open
 

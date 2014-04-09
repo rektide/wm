@@ -30,7 +30,7 @@ util.inherits(Processor, events.EventEmitter)
 Processor.prototype.add= function(source, rolePermissions){
 	if(arguments.length > 2){
 		throw "too many arguments"
-	}else if(arguments.length == 2 && !Arrays.isArray(rolePermissions)){
+	}else if(arguments.length == 2 && !Array.isArray(rolePermissions)){
 		throw "expected argument not found: rolePermissions"
 	}
 	if(!rolePermissions){
