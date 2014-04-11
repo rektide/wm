@@ -50,5 +50,3 @@ function go(o, opts, proto){
 		o.open()
 }
 Base.go= go
-
-

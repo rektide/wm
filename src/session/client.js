@@ -1,11 +1,12 @@
-var _= require("lodash"),
+var util= require("util"),
+  _= require("lodash"),
   when= require("when"),
   Base= require("../base"),
   Session= require("./session"),
   msgs= require("../wamp/msgs")
 
 module.exports= ClientSession
-module.exports.Helloer= ClientSession
+module.exports.ClientSession= ClientSession
 
 /**
   ClientSession commences a client connection on a pipe, issuing a Hello message and establishing a session with the first resulting Welcome
@@ -33,8 +34,10 @@ function ClientSession(pipe, realm, opts){
 util.inherits(ClientSession, Session)
 
 function prefs(opts){
-	this.details= _.extend({}, opts.pipe.details, opts.details)
+	this.pipe= opts.pipe
 	this.realm= opts.realm|| ""
+	this.details= _.extend({}, opts.pipe.details, opts.details)
+
 	this._sessionId= when.defer()
 	this.sessionId= this._sessionId.promise
 	this._serverDetails= when.defer()
@@ -43,14 +46,13 @@ function prefs(opts){
 ClientSession.prototype.prefs= prefs
 
 function open(){
-	var hello = new msgs.Hello(realm, details)
-	this.emit(hello)
-	this.once(msgs.Welcome.messageType, function(msg){
-		this._sessionId.resolve(msg.session)
-		this.serverDetails.resolve(msg.details)
-	})
+	var self= this,
+	  hello= new msgs.Hello(this.realm, this.details)
+	this.pipe.emit(hello)
+	function welcomed(welcome){
+		self._sessionId.resolve(welcome.session)
+		self._serverDetails.resolve(welcome.deatils)
+	}
+	this.pipe.once(msgs.Welcome.messageType, welcomed)
 }
 ClientSession.prototype.open= open
-
-
-
