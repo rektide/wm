@@ -4,6 +4,7 @@ var util= require("util"),
 module.exports= Session
 module.exports.Session= Session
 
-function Session(){
+function Session(sessionId){
+	this.sessionId= sessionId
 }
 util.inherits(Session, Base)

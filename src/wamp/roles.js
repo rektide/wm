@@ -1,8 +1,8 @@
 var msgs= require("./msgs")
 
-var all= [msgs.Goodbye.messageType, msgs.Hearbeat.messageType],
+var all= [msgs.Goodbye.messageType, msgs.Heartbeat.messageType],
   client= all.concat([msgs.Hello.messageType, msgs.Authenticate.messageType]),
-  server= all.concat([msgs.Welcome.messageType, msgs.Abort.messageType, msgs.Challenge.messageType, msgs.Error.messageType])
+  server= all.concat([msgs.Welcome.messageType, msgs.Abort.messageType, msgs.Challenge.messageType, msgs.WampError.messageType])
 
 function allowed(base){
 	var rv= base.slice(0)
@@ -16,7 +16,7 @@ module.exports.Caller= {
 }
 
 module.exports.Callee= {
-	allowed: allowed(client, msgs.Error, msgs.Register, msgs.Unregister, msgs.Yield)
+	allowed: allowed(client, msgs.WampError, msgs.Register, msgs.Unregister, msgs.Yield)
 }
 
 module.exports.Publisher= {
@@ -34,7 +34,7 @@ module.exports.BrokerFront= {
 
 module.exports.BrokerBack= {
 	side: "back",
-	allowed: allowed(server, msgs.Subscribed, msgs.Unsubscribed, msgs.Event)
+	allowed: allowed(server, msgs.Subscribed, msgs.Unsubscribed, msgs.WampEvent)
 }
 
 module.exports.DealerFront= {
