@@ -2,24 +2,25 @@ module.exports= realmValidator
 module.exports.RealmValidator
 
 function realmValidator(incoming){
+	var got
 	if(this.realm){
-		if(checkRealm.call(this, this.realm, incoming))
-			return true
+		got= checkRealm.call(this, this.realm, incoming)
+		if(got)
+			return got
 	}else if(this.realms){
 		for(var i in this.realms){
-			if(checkRealm.call(this, this.realms[i], incoming))
-				return true
+			got= checkRealm.call(this, this.realms[i], incoming)
+			if(got)
+				return got
 		}
 	}
 }
 
 function checkRealm(realm, incoming){
-	if(realm instanceof Function && realm.call(this,incoming))
-		return false
-	else if(typeof realm == "string" && realm != incoming)
-		return false
+	if(realm instanceof Function)
+		return realm.call(this, incoming)
 	else if(typeof realm == "string")
-		return true
+		return realm!= incoming? false: realm
 	else
 		throw "Unexpected realm type "+(typeof realm)
 }

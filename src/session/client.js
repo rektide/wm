@@ -36,7 +36,12 @@ util.inherits(ClientSession, Session)
 function prefs(opts){
 	this.pipe= opts.pipe
 	this.realm= opts.realm|| ""
-	this.details= _.extend({}, opts.pipe.details, opts.details)
+
+	var roles= opts.roles|| (opts.details&& opts.details.roles)|| {caller:{}},
+	  details= opts.details
+	if(details instanceof Function)
+		details= details.call(this, opts)
+	this.details= _.defaults({roles:roles}, details, this.pipe.details)
 
 	this._sessionId= when.defer()
 	this.sessionId= this._sessionId.promise

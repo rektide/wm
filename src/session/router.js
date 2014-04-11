@@ -119,6 +119,10 @@ function welcome(hello, pipe){
 	var session= new Session(sessionId)
 	session.pipe= pipe
 	session.router= this
+	session.realm= realm
+	session.roles= roles
+	session.details= details
+	session.clientDetails= hello.details
 	this.sessions[sessionId]= session
 	this.emit("session", session)
 }
