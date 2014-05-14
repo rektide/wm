@@ -6,6 +6,16 @@ var _emit= events.EventEmitter.prototype.emit
 module.exports= Base
 module.exports.Base= Base
 
+/**
+  Base is a convention for a two stage constructor that initializes itself
+  and then opens itself (unless the "noOpen" option is passed to the constructor).
+
+  Beyond the "open" auto-call, implementing constructors also by convention accept
+  a trailing "options" object. The options ought pass through to parent constructors.
+
+  @param target (optional) an EventTarget to specify output to
+  @param direct (optional) not implemented, tell sub-constructors that they should bind their data to the primary method
+*/
 function Base(opts){
 	if(!(this instanceof Base)){
 		return new Base(opts)
@@ -16,11 +26,14 @@ function Base(opts){
 }
 util.inherits(Base, events.EventEmitter)
 
+// TODO: eliminate, this is just the constructor
 function prefs(opts){
 	if(opts){
-		this.target= opts.target
+		this.target= opts.target|| this
 		if(this.noOpen)
 			this.noOpen= true
+		if(this.direct)
+			throw "Direct not implemented"
 	}else{
 		this.target= this
 	}
@@ -50,3 +63,9 @@ function go(o, opts, proto){
 		o.open()
 }
 Base.go= go
+
+Base.targetMessage= function(self, msgName){
+	return function(o){
+		self[msgName].call(self.target, o)
+	}
+}

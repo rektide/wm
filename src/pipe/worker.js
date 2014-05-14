@@ -6,6 +6,11 @@ var events= require("events"),
 
 module.exports= WorkerPipe
 
+/**
+  Worker extends {@link CrossDocumentPipe} with a WebWorker focused implementation,
+  which performs the extra, necessary steps of serializing-deserializing the event
+  payloads into and out of JSON.
+*/
 function WorkerPipe(port, opts){
 	if(!(this instanceof WorkerPipe))
 		return new WorkerPipe(port, opts)
@@ -17,8 +22,10 @@ function WorkerPipe(port, opts){
 		throw "expected port"
 	}
 
-	WorkerPipe.super_.call(this, opts, port)
-	Base.go(this, opts, WorkerPipe)
+	var self= this
+	self= WorkerPipe.super_.call(self, opts, port)
+	Base.go(self, opts, WorkerPipe)
+	return this
 }
 util.inherits(WorkerPipe, CrossDocumentPipe)
 

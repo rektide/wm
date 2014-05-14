@@ -14,7 +14,22 @@ module.exports= Router
 module.exports.ClientSession= Router
 
 /**
-  Router listens for incoming Hello messages, responding with a Welcome and emitting the new Session
+  Router configures a pipe to listen for incoming Hello messages, responding by:
+   + putting a Welcome reply into the pipe
+   + emit a new "session" event
+   + store the Session by key in the sessions map
+
+  If a goodbye is receieved on the port, Router will:
+   + return a matching Goodbye to the pipe
+   + emit a "close" event for the session.
+
+  @option pipe (or pipes) set of pipes to listen and respond on
+  @option rolesMandatory (named-option) roles the client must bear
+  @option rolesAllowed (named-option) roles to permit the client to have
+  @option rolesDisallowed (named-option) roles to disallow on the client
+  @option welcome (named-option) function to respond to a hello
+  @option noAbort (named-option)
+  @option sessions (named-option) existing mapping of sessionId to Session
 */
 function Router(pipe, opts){
 	if(!(this instanceof Router)){
@@ -100,9 +115,11 @@ function addPipe(pipe){
 Router.prototype.addPipe= addPipe
 
 function welcome(hello, pipe){
+	// check realm
 	var realm= this.realmValidator(hello.realm)
 	if(!realm)
 		return this.noMatch("realm", hello, pipe)
+	// compute roles
 	var roles= this.roleResponder(hello.details.roles, pipe)
 	if(!roles)
 		return this.noMatch("role", hello, pipe)
@@ -110,7 +127,7 @@ function welcome(hello, pipe){
 	var details= this.details
 	if(this.details instanceof Function)
 		details= this.details(hello, pipe)
-	details= _.defaults({roles:roles}, details, pipe.details)
+	details= _.merge({roles:roles}, details, pipe.details)
 
 	var sessionId= rand(),
 	  wel= new msgs.Welcome(sessionId, details)
