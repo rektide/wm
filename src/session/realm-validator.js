@@ -13,7 +13,10 @@ function realmValidator(incoming){
 			if(got)
 				return got
 		}
+	}else{
+		return
 	}
+	return false
 }
 
 function checkRealm(realm, incoming){

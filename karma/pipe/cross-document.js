@@ -25,13 +25,14 @@ describe("CrossDocumentPipe sending", function(){
 			done.resolve()
 		}
 
-		var hello= new msgs.Hello(realm, pipe.details)
-		pipe.emit(hello)
-		return done.promise
+		//var hello= new msgs.Hello(realm, pipe.details)
+		//pipe.emit(hello)
+		//return done.promise
 	})
 })
 
 describe("CrossDocumentPipe receiving", function(){
+/*
 	var channel= new MessageChannel(),
 	  pipe= new cross(channel.port1),
 	  port2= channel.port2,
@@ -50,4 +51,5 @@ describe("CrossDocumentPipe receiving", function(){
 		port2.postMessage(arrayWriter(hello))
 		return done.promise
 	})
+*/
 })

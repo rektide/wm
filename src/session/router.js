@@ -46,8 +46,10 @@ function Router(pipe, opts){
 		opts= {pipe:pipe}
 	}
 
-	Router.super_.call(this, opts)
-	Base.go(this, opts, Router)
+	var self= this
+	self= Router.super_.call(self, opts)
+	Base.go(self, opts, Router)
+	return self
 }
 util.inherits(Router, Base)
 
@@ -116,8 +118,9 @@ Router.prototype.addPipe= addPipe
 
 function welcome(hello, pipe){
 	// check realm
-	var realm= this.realmValidator(hello.realm)
-	if(!realm)
+	var realm= this.realmValidator.call(this, hello.realm)
+
+	if(realm === false)
 		return this.noMatch("realm", hello, pipe)
 	// compute roles
 	var roles= this.roleResponder(hello.details.roles, pipe)
@@ -134,6 +137,7 @@ function welcome(hello, pipe){
 	pipe.emit(wel)
 
 	var session= new Session(sessionId)
+	session.id= sessionId
 	session.pipe= pipe
 	session.router= this
 	session.realm= realm
@@ -164,7 +168,6 @@ function goodbye(gb, pipe){
 Router.prototype.goodbye= goodbye
 
 function noMatch(cause, hello, pipe){
-	console.log("death",cause)
 	if(!this.noAbort)
 		pipe.emit(new msgs.Abort({message: cause}, "wm.error."+cause))
 	this.emit("noMatch", cause, hello, pipe)

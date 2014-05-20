@@ -23,6 +23,7 @@ function Base(opts){
 
 	Base.super_.call(this)
 	Base.go(this, opts, Base)
+	return this
 }
 util.inherits(Base, events.EventEmitter)
 

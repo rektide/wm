@@ -6,5 +6,7 @@ module.exports.Session= Session
 
 function Session(sessionId){
 	this.sessionId= sessionId
+
+	return this
 }
 util.inherits(Session, Base)

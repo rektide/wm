@@ -41,7 +41,7 @@ function ClientSession(pipe, realm, opts){
 	}
 
 	var self= this
-	self= ClientSession.super_.call(this, opts)
+	self= ClientSession.super_.call(self, opts)
 	Base.go(self, opts, ClientSession)
 	return self
 }

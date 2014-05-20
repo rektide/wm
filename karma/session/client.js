@@ -28,11 +28,11 @@ describe("ClientSession", function(){
 			expect(hello[1]).to.equal(realm)
 			expect(hello[2]).to.be.instanceOf(Object)
 			expect(clientSession1.sessionId.inspect().state).to.equal("pending")
-			expect(clientSession1.serverDetails.inspect().state).to.equal("pending")
+			expect(clientSession1.routerDetails.inspect().state).to.equal("pending")
 			done.resolve()
 		}
-		expect(clientSession.realm).to.equal(realm)
-		expect(clientSession.pipe).to.equal(pipe1)
+		expect(clientSession1.realm).to.equal(realm)
+		expect(clientSession1.pipe).to.equal(pipe1)
 		return chai.assert.isFulfilled(done.promise)
 	})
 
